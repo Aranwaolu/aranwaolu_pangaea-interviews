@@ -79,7 +79,7 @@ const CurrencyDropDown = ({ headValue, currencyList, handleCurrencyChange }) => 
 		setheadvalue(e)
 	}
 
-	//maybe readQuery...
+	//maybe readQuery....
 	return (
 		<div>
 			<Select

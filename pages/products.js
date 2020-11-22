@@ -28,7 +28,7 @@ const ProductsPage = () => {
 
 	return (
 		<div>
-			<h1 style={{ textAlign: 'center' }}>Products Page</h1>
+			<h1 style={{ textAlign: 'center' }}>Products</h1>
 			<CartIcon
 				onClick={() => {
 					toggle()

@@ -71,7 +71,7 @@ const AddToCartButton = styled.button`
 const Product = ({ product, toggle }) => {
 	const handleCartButton = (product) => {
 		addItemToCart(product)
-		toggle() // make sure this refetchs the cart after adding the quantity
+		toggle() // make sure this refetchs the cart after adding the quantity...
 	}
 
 	return (

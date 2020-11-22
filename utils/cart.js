@@ -47,7 +47,7 @@ export const addItemToCart = (cartItemToAdd, quantity, currency = 'USD') => {
 	localStorage.setItem('cart', JSON.stringify(cart))
 }
 
-export const removeFromCart = (item, quantity) => {
+export const removeFromCart = (item) => {
 	let cart = JSON.parse(localStorage.getItem('cart') || '[]')
 	let existingCartItem = cart.some((cartItem) => cartItem.id === item.id)
 

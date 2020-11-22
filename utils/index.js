@@ -9,6 +9,7 @@ export const convertToArrayOfObjects = (array) => {
 	return newArrayOfObjects
 }
 
+// check currency
 export const checkCurrency = (currencyInCart, currencyNewSelect) => {
 	console.log(currencyInCart, currencyNewSelect)
 	return currencyInCart == currencyNewSelect

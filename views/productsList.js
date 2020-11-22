@@ -16,7 +16,7 @@ const ProductDisplay = styled.div`
 `
 
 const ProductList = ({ toggle }) => {
-	// const [skip, setSkip] = useState(false)
+	const [skip, setSkip] = useState(false)
 	const { loading, error, data } = useQuery(ALL_PRODUCTS_QUERY, {
 		variables: { currency: 'USD' },
 	})

@@ -21,7 +21,6 @@ const CartCard = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	margin: 20px;
-	// padding: 10px;
 	padding: 10px 20px;
 	background-color: white;
 `

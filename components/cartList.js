@@ -79,7 +79,7 @@ const PriceTag = styled.div`
 	border-top: 2px solid grey;
 `
 
-const CartList = ({ isShown, hide, toggle }) => {
+const CartList = ({ isShown, hide }) => {
 	const [cart, setcart] = useState([])
 
 	const [selectedCurrency, setselectedCurrency] = useState([])

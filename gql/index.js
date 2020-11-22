@@ -17,6 +17,7 @@ export const ALL_PRODUCTS_QUERY = gql`
 	}
 `
 
+// second products query
 export const ALL_PRODUCTS_QUERY_2 = gql`
 	query allProducts($currency: Currency!) {
 		products {

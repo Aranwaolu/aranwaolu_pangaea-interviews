@@ -1,21 +1,24 @@
-export const getCart = (full) => {
-	if (full == 'Yes') {
-		return JSON.parse(localStorage.getItem('cart'))
-	} else {
-		let cart = JSON.parse(localStorage.getItem('cart') || '[]')
+export const getCart = () => {
+	let cart = JSON.parse(localStorage.getItem('cart') || '[]')
 
-		const cartTotal = totalCart()
+	const currency = cart[0]
+	let cartTotal = 0
 
-		if (cart.length > 1) {
-			cart.splice(0, 1)
+	if (cart.length > 1) {
+		const cartItems = [...cart]
 
-			return {
-				cart,
-				cartTotal,
-			}
-		} else {
-			return { cart: [], cartTotal }
+		cartItems.splice(0, 1)
+		cartItems.forEach((obj) => {
+			cartTotal += obj.price * obj.quantity
+		})
+
+		return {
+			currency,
+			cartItems,
+			cartTotal,
 		}
+	} else {
+		return { currency, cartItems: [], cartTotal }
 	}
 }
 
@@ -25,7 +28,7 @@ export const addItemToCart = (cartItemToAdd, quantity, currency = 'USD') => {
 	if (cart.length == 0) {
 		cart.push(currency)
 	} else if (cart[0] && cart[0] !== currency) {
-		cart.splice(0, 0, currency)
+		cart.splice(0, 1, currency) // this doesn't care if the price value is different
 	}
 
 	let existingCartItem = cart.some((cartItem) => cartItem.id === cartItemToAdd.id)
@@ -67,7 +70,6 @@ export const removeOneQuantityOfItem = (item) => {
 }
 
 export const decreaseQuantity = (item) => {
-	// include changing the physical value on the screen maybe?? or fetch it???
 	let cart = JSON.parse(localStorage.getItem('cart') || '[]')
 	let existingCartItem = cart.some((cartItem) => cartItem.id === item.id)
 
@@ -109,41 +111,35 @@ export const getQuantityOfOneItem = () => {
 	}
 }
 
-const updateCart = (currencySelected, newProductsData) => {
-	/// thisssss!!!!
-	// gets the cart from local storage
+export const updateCart = (currencySelected, newProductsData) => {
 	let cart = JSON.parse(localStorage.getItem('cart') || '[]')
 
-	if (cart[0] !== currencySelected) {
-		cart[0] = currencySelected
-	}
-
-	// now, compare and update
-	let newProducts = newProductsData.newProducts
-
-	// update the cart
-	// return the cart to local storage and also for display?? or after that re-render??
-}
-
-export const totalCart = () => {
-	let cart = JSON.parse(localStorage.getItem('cart') || '[]')
-	let currency = cart[0]
-
-	let total = 0
+	// Check that the cart is not empty
 	if (cart.length > 1) {
-		cart.splice(0, 1)
-		cart.forEach((obj) => {
-			total += obj.price * obj.quantity
+		console.log(cart)
+		if (cart[0] !== currencySelected) {
+			cart[0] = currencySelected
+		}
+
+		let newProducts = newProductsData.products // new full array
+
+		let cartItems = [...cart]
+		cartItems.splice(0, 1)
+
+		// Update the cart
+		cartItems.forEach((objOldCart) => {
+			let id = objOldCart.id
+
+			// using the above id, find object in new full array with the same id
+			let newObj = newProducts.find((obj) => {
+				return obj.id === id
+			})
+
+			objOldCart.price = newObj.price
 		})
 
-		return {
-			currency,
-			totalPrice: total,
-		}
-	} else {
-		return {
-			currency,
-			totalPrice: total,
-		}
+		const newCart = [cart[0], ...cartItems]
+
+		localStorage.setItem('cart', JSON.stringify(newCart))
 	}
 }

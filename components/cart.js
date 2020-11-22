@@ -7,6 +7,10 @@ export const EmptyCart = styled.div`
 	padding: 30px;
 	font-size: 20px;
 	color: grey;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 80px 0px;
 `
 
 const CartCard = styled.div`

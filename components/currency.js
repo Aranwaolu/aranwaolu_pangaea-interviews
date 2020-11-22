@@ -69,16 +69,14 @@ const customStyles = {
 	}),
 }
 
-const CurrencyDropDown = ({ currencyList, handleCurrencyChange }) => {
+const CurrencyDropDown = ({ headValue, currencyList, handleCurrencyChange }) => {
 	// headvalue is also the selected value for the currency
-	const [headvalue, setheadvalue] = useState('USD')
+	const [headvalue, setheadvalue] = useState(headValue)
 
 	const options = convertToArrayOfObjects(currencyList.currency)
 
 	const handleChange = (e) => {
 		setheadvalue(e)
-
-		console.log('something was selected...', e)
 	}
 
 	//maybe readQuery...

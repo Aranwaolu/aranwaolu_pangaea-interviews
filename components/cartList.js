@@ -2,7 +2,7 @@ import { gql, useQuery, useLazyQuery } from '@apollo/client'
 import React, { useEffect, useLayoutEffect, useState } from 'react'
 
 import { ALL_CURRENCIES_QUERY, ALL_PRODUCTS_QUERY, ALL_PRODUCTS_QUERY_2 } from '../gql/index'
-import { getCart, removeFromCart, totalCart } from '../utils/cart'
+import { getCart, removeFromCart, updateCart } from '../utils/cart'
 
 import CurrencyDropDown from '../components/currency'
 import { convertToArrayOfObjects, checkCurrency } from '../utils/index'
@@ -18,7 +18,8 @@ const Wrapper = styled.div`
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background-color: rgba(219, 219, 217, 0.3);
+	background-color: rgba(0, 0, 0, 0.5);
+	// background-color: rgba(219, 219, 217, 0.3);
 `
 
 const Modal = styled.div`
@@ -47,7 +48,7 @@ const CloseButton = styled.button`
 	font-weight: 500;
 	color: grey;
 	border: 1px solid grey;
-	border-radius: 3px;
+	border-radius: 15px;
 	margin: 20px 0px;
 
 	&:focus,
@@ -78,10 +79,8 @@ const PriceTag = styled.div`
 	border-top: 2px solid grey;
 `
 
-const CartList = ({ isShown, hide }) => {
+const CartList = ({ isShown, hide, toggle }) => {
 	const [cart, setcart] = useState([])
-	const [cartList, setcartList] = useState({})
-	const [cartPriceData, setcartPriceData] = useState({})
 
 	const [selectedCurrency, setselectedCurrency] = useState([])
 	const { loading: currencyLoading, error: currencyError, data: currencyData } = useQuery(
@@ -96,6 +95,14 @@ const CartList = ({ isShown, hide }) => {
 	})
 
 	const dynamicModalClass = () => (isShown ? { display: 'block' } : '')
+
+	let headValueCurrency = 'USD'
+	if (typeof localStorage !== 'undefined') {
+		const dummyCart = getCart()
+		if (dummyCart && dummyCart.cartItems.length !== 0) {
+			headValueCurrency = dummyCart.currency
+		}
+	}
 
 	useEffect(() => {
 		setcart(getCart())
@@ -112,37 +119,25 @@ const CartList = ({ isShown, hide }) => {
 		setcart(getCart())
 	}
 
-	// refetch?? query first then, refetch on currency chaange???
 	const handleCurrencyChange = (selectedValue) => {
-		console.log('in cart...')
-		setselectedCurrency(selectedValue) // ??????
+		setselectedCurrency(selectedValue)
 
 		getNewPrices()
 
-		// if (productsData) {
-		// 	console.log(productsData)
-		// }
+		let newProductsFetch = getCart()
 
-		let cart = getCart('Yes')
-		// setcartList(cart)
+		if (productsData && newProductsFetch) {
+			let currencyCheck = checkCurrency(cart.currency, selectedValue)
 
-		if (productsData && cart) {
-			// check currency
-			let currencyCheck = checkCurrency(cart, selectedValue)
-			console.log('currency check is: ', currencyCheck)
-			console.log('got them...ready to update')
+			// Then update the cart
+			if (currencyCheck == false) {
+				updateCart(selectedValue, productsData)
+			}
 
-			//loop through cart (excluding index 0) and check by id for productsData and update price
-			// update currency in cart to be newCurrency --- simple...last thing?
-			// update in localstorage instead of calling cart???????????
-
-			/////......check cart utils
+			// Bug here...
+			// setcart(getCart())
+			handleCartChange() // still buggy
 		}
-
-		// after checking...compare array with newPrices productsData
-		// create new cart
-		// do i have to send it back to the localstorage??
-		// setCart() for new cart maybe cartList
 	}
 
 	return isShown ? (
@@ -157,6 +152,7 @@ const CartList = ({ isShown, hide }) => {
 						<CurrencyDropDown
 							currencyList={currencyData}
 							handleCurrencyChange={handleCurrencyChange}
+							headValue={headValueCurrency}
 						/>
 					)}{' '}
 					{currencyError || (currencyLoading && <CurrencyDropDown />)}
@@ -164,8 +160,8 @@ const CartList = ({ isShown, hide }) => {
 
 				<div>
 					{cart &&
-						cart.cart.length !== 0 &&
-						cart.cart.map((product) => (
+						cart.cartItems.length !== 0 &&
+						cart.cartItems.map((product) => (
 							<Cart
 								key={product.id}
 								cartItem={product}
@@ -175,19 +171,19 @@ const CartList = ({ isShown, hide }) => {
 								handleCartChange={handleCartChange}
 							/>
 						))}
-					{cart && cart.cart.length == 0 && <EmptyCart>Your cart is empty</EmptyCart>}
+					{cart && cart.cartItems.length == 0 && <EmptyCart>Your cart is empty</EmptyCart>}
 				</div>
 
 				<div>
-					{cart && cart.cart.length !== 0 && (
+					{cart && cart.cartItems.length !== 0 && (
 						<PriceTag>
 							<p>Total: </p>
 							<p>
-								{cart.cartTotal.currency} {cart.cartTotal.totalPrice}
+								{cart.currency} {cart.cartTotal}
 							</p>
 						</PriceTag>
 					)}
-					{cart.cart.length == 0 && <div></div>}
+					{cart.cartItems.length == 0 && <div></div>}
 				</div>
 			</Modal>
 		</Wrapper>

@@ -13,14 +13,10 @@ const ProductDisplay = styled.div`
 	justify-content: space-between;
 	align-items: left;
 	margin: 0 auto;
-
-	@media only screen and (max-width: 768px) {
-		// margin: 50px;
-	}
 `
 
 const ProductList = ({ toggle }) => {
-	const [skip, setSkip] = useState(false)
+	// const [skip, setSkip] = useState(false)
 	const { loading, error, data } = useQuery(ALL_PRODUCTS_QUERY, {
 		variables: { currency: 'USD' },
 	})
